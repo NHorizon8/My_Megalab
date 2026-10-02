@@ -1,10 +1,10 @@
 ## Lab Overview & Implementation Notes
 
-![](../z%20image/megalab%20topology.png)
+![](Lab%20Docs/z%20image/megalab%20topology.png)
 
-![](../z%20image/topology%20int.png)
+![](Lab%20Docs/z%20image/topology%20int.png)
 
-![](../z%20image/office%20topo.png)
+![](Lab%20Docs/z%20image/office%20topo.png)
 
 This lab was planned as a complete enterprise network lab based on the concepts covered in Jeremy's IT Lab Mega Lab.
 
@@ -31,9 +31,9 @@ During the actual implementation, most of the planned network was configured and
     
 
 ### Final Status
-![](../z%20image/Screenshot%20from%202026-10-01%2009-49-53.png)
+![](Lab%20Docs/z%20image/Screenshot%20from%202026-10-01%2009-49-53.png)
 Because of these limitations, the final lab is not an exact copy of the original plan.
-![](../z%20image/Screenshot%20from%202026-10-01%2009-53-20.png)
+![](Lab%20Docs/z%20image/Screenshot%20from%202026-10-01%2009-53-20.png)
 ==The final topology represents what was actually configured and tested in the Packet Tracer environment. The remaining differences are documented here so that anyone reviewing the project can clearly understand what was planned, what was implemented, and where Packet Tracer prevented the original design from being completed.==
 
 The project is therefore being kept in its final working state rather than making further changes only to force unsupported simulator behaviour.
