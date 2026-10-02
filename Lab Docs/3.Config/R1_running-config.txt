@@ -1,0 +1,205 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R1
+!
+!
+!
+enable secret 5 $1$mERr$gUYjfUIPIE.5C5nxcphe31
+!
+!
+ip dhcp excluded-address 10.10.0.1 10.10.0.20
+ip dhcp excluded-address 10.10.10.1 10.10.10.20
+ip dhcp excluded-address 10.10.20.1 10.10.20.20
+ip dhcp excluded-address 10.10.40.1 10.10.40.20
+ip dhcp excluded-address 10.20.0.1 10.20.0.20
+ip dhcp excluded-address 10.20.10.1 10.20.10.20
+ip dhcp excluded-address 10.20.20.1 10.20.20.20
+ip dhcp excluded-address 10.20.30.1 10.20.30.20
+!
+ip dhcp pool A-MGMT
+ network 10.10.0.0 255.255.255.0
+ default-router 10.10.0.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool A-PC
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool A-PHONE
+ network 10.10.20.0 255.255.255.0
+ default-router 10.10.20.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool A-WIFI
+ network 10.10.40.0 255.255.255.0
+ default-router 10.10.40.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool B-MGMT
+ network 10.20.0.0 255.255.255.0
+ default-router 10.20.0.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool B-PC
+ network 10.20.10.0 255.255.255.0
+ default-router 10.20.10.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool B-PHONE
+ network 10.20.20.0 255.255.255.0
+ default-router 10.20.20.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+ip dhcp pool B-SERVER
+ network 10.20.30.0 255.255.255.0
+ default-router 10.20.30.1
+ dns-server 10.20.30.4
+ domain-name nhorizon.lab
+clock timezone IST 5 30
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+!
+!
+username admin secret 5 $1$mERr$gUYjfUIPIE.5C5nxcphe31
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524G79C-
+!
+!
+!
+lldp run
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.255.255.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.100.0.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip ospf 1 area 0
+ ip nat inside
+ duplex auto
+ speed auto
+ ipv6 address 2001:DB8:A1::/64 eui-64
+!
+interface GigabitEthernet0/1
+ ip address 10.100.0.5 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip ospf 1 area 0
+ ip nat inside
+ duplex auto
+ speed auto
+ ipv6 address 2001:DB8:A2::/64 eui-64
+!
+interface GigabitEthernet0/2
+ description TO-ISP-A
+ ip address dhcp
+ ip nat outside
+ duplex auto
+ speed auto
+ ipv6 address 2001:DB8:AA::2/64
+ ipv6 enable
+!
+interface GigabitEthernet0/0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/1/0
+ ip address dhcp
+!
+interface GigabitEthernet0/2/0
+ ip address dhcp
+!
+interface GigabitEthernet0/3/0
+ no ip address
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 10.255.255.1
+ log-adjacency-changes
+ passive-interface Loopback0
+ network 10.100.0.0 0.0.0.3 area 0
+ network 10.100.0.4 0.0.0.3 area 0
+ default-information originate
+!
+ip nat pool NHORIZON-PAT 203.0.113.201 203.0.113.206 netmask 255.255.255.248
+ip nat inside source list 2 pool NHORIZON-PAT overload
+ip nat inside source static 10.20.30.4 203.0.113.113 
+ip classless
+!
+ip flow-export version 9
+!
+ipv6 route ::/0 2001:DB8:AA::1
+!
+access-list 2 permit 10.10.10.0 0.0.0.255
+access-list 2 permit 10.10.20.0 0.0.0.255
+access-list 2 permit 10.20.10.0 0.0.0.255
+access-list 2 permit 10.20.20.0 0.0.0.255
+access-list 2 permit 10.10.40.0 0.0.0.255
+access-list 1 permit 10.10.10.0 0.0.0.255
+!
+no cdp run
+!
+!
+!
+!
+snmp-server community NHORIZON8_RO RO
+!
+logging trap debugging
+logging 10.20.30.4
+line con 0
+ history size 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class 1 in
+ logging synchronous
+ login local
+ transport input ssh
+line vty 5 15
+ access-class 1 in
+ logging synchronous
+ login local
+ transport input ssh
+!
+!
+ntp master 3
+!
+end
+

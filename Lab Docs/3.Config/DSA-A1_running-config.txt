@@ -1,0 +1,238 @@
+!
+version 16.3.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname DSW-A1
+!
+!
+no profinet
+enable secret 5 $1$mERr$gUYjfUIPIE.5C5nxcphe31
+!
+!
+!
+!
+!
+!
+no ip cef
+ip routing
+!
+no ipv6 cef
+!
+!
+!
+username admin secret 5 $1$mERr$gUYjfUIPIE.5C5nxcphe31
+!
+!
+lldp run
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+ip domain-name nhorizon.lab
+ip name-server 10.20.30.4
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree vlan 10,99 priority 4096
+spanning-tree vlan 20,40 priority 8192
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.255.255.4 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Port-channel1
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface GigabitEthernet1/0/1
+ no switchport
+ ip address 10.100.0.14 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet1/0/2
+ no switchport
+ ip address 10.100.0.18 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet1/0/3
+!
+interface GigabitEthernet1/0/4
+!
+interface GigabitEthernet1/0/5
+!
+interface GigabitEthernet1/0/6
+!
+interface GigabitEthernet1/0/7
+!
+interface GigabitEthernet1/0/8
+!
+interface GigabitEthernet1/0/9
+!
+interface GigabitEthernet1/0/10
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface GigabitEthernet1/0/11
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface GigabitEthernet1/0/12
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface GigabitEthernet1/0/13
+!
+interface GigabitEthernet1/0/14
+!
+interface GigabitEthernet1/0/15
+!
+interface GigabitEthernet1/0/16
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface GigabitEthernet1/0/19
+!
+interface GigabitEthernet1/0/20
+!
+interface GigabitEthernet1/0/21
+!
+interface GigabitEthernet1/0/22
+!
+interface GigabitEthernet1/0/23
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode desirable
+!
+interface GigabitEthernet1/0/24
+ switchport trunk allowed vlan 10,20,40,99
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode desirable
+!
+interface GigabitEthernet1/1/1
+!
+interface GigabitEthernet1/1/2
+!
+interface GigabitEthernet1/1/3
+!
+interface GigabitEthernet1/1/4
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ mac-address 0001.9747.c501
+ ip address 10.10.10.2 255.255.255.0
+ ip helper-address 10.255.255.1
+ ip ospf 1 area 0
+ standby 10 ip 10.10.10.1
+ standby 10 priority 105
+ standby 10 preempt
+!
+interface Vlan20
+ mac-address 0001.9747.c502
+ ip address 10.10.20.2 255.255.255.0
+ ip helper-address 10.255.255.1
+ ip ospf 1 area 0
+ standby 20 ip 10.10.20.1
+ standby 20 priority 95
+ standby 20 preempt
+!
+interface Vlan40
+ mac-address 0001.9747.c503
+ ip address 10.10.40.2 255.255.255.0
+ ip helper-address 10.255.255.1
+ ip ospf 1 area 0
+ standby 40 ip 10.10.40.1
+ standby 40 priority 95
+ standby 40 preempt
+!
+interface Vlan99
+ mac-address 0001.9747.c504
+ ip address 10.10.0.2 255.255.255.0
+ ip helper-address 10.255.255.1
+ ip ospf 1 area 0
+ standby 99 ip 10.10.0.1
+ standby 99 priority 105
+ standby 99 preempt
+!
+router ospf 1
+ router-id 10.255.255.4
+ log-adjacency-changes
+ passive-interface Loopback0
+ passive-interface Vlan10
+ passive-interface Vlan20
+ passive-interface Vlan40
+ passive-interface Vlan99
+!
+ip classless
+!
+ip flow-export version 9
+!
+!
+ip access-list extended OfficeA_to_OfficeB
+ permit icmp 10.10.10.0 0.0.0.255 10.20.10.0 0.0.0.255
+ deny ip 10.10.10.0 0.0.0.255 10.20.10.0 0.0.0.255
+ permit ip any any
+access-list 1 permit 10.10.10.0 0.0.0.255
+!
+no cdp run
+!
+!
+!
+!
+snmp-server community NHORIZON8_RO RO
+!
+logging trap debugging
+logging 10.20.30.4
+line con 0
+ history size 0
+!
+line aux 0
+!
+line vty 0 4
+ access-class 1 in
+ logging synchronous
+ login local
+ transport input ssh
+line vty 5 15
+ access-class 1 in
+ logging synchronous
+ login local
+ transport input ssh
+!
+!
+!
+ntp server 10.255.255.1
+!
+end
+
